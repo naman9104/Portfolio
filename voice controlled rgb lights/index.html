@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voice Controlled Colors</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      color: white;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.5s ease, background 0.5s ease;
+      background-color: black;
+    }
+
+    h1 {
+      font-size: 3rem;
+      text-shadow: 0 0 20px cyan;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+
+    /* Rainbow animation */
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .rainbow-bg {
+      background: linear-gradient(270deg, red, orange, yellow, rgb(141, 255, 141), rgb(133, 133, 255), rgb(190, 100, 255), violet);
+      background-size: 1400% 1400%;
+      animation: rainbow 10s ease infinite;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎙️ Say any color or “rainbow”</h1>
+  <div id="status">Waiting for voice input...</div>
+
+  <script>
+    const statusDiv = document.getElementById('status');
+    const body = document.body;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser doesn't support Web Speech API");
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    function isValidCSSColor(color) {
+      const s = new Option().style;
+      s.color = color;
+      return s.color !== '';
+    }
+
+    function setColor(color) {
+      body.classList.remove('rainbow-bg');
+      body.style.background = ''; // Clear inline background to reset
+
+      if (color === 'rainbow' || color === 'rgb') {
+        body.classList.add('rainbow-bg');
+        statusDiv.textContent = `🌈 Rainbow mode activated!`;
+      } else if (isValidCSSColor(color)) {
+        body.style.background = color;
+        statusDiv.textContent = `Changed to "${color}"`;
+      } else {
+        statusDiv.textContent = `Unknown color: "${color}"`;
+      }
+    }
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      console.log("Heard:", transcript);
+
+      const words = transcript.split(/\s+/);
+      for (let word of words) {
+        if (word === 'rainbow' || word === 'rgb' || isValidCSSColor(word)) {
+          setColor(word);
+          break;
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      statusDiv.textContent = "Error: " + event.error;
+    };
+
+    recognition.onend = () => {
+      recognition.start(); // Keep listening forever
+    };
+
+    recognition.start();
+  </script>
+</body>
+</html>

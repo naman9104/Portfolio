@@ -1,0 +1,157 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #000000, #2e1863, #4d117e);
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+  margin: 0;
+  padding: 1rem;
+  padding-top: 70px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.intro, .about {
+  font-size: 20px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+h1, h2 {
+  text-align: left;
+  color: white;
+  font-size: 32px;
+  text-shadow: 1px 1px 6px #000000a0;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  font-size: 18px;
+  line-height: 2;
+}
+
+ul li::before {
+  content: "🛠️ ";
+}
+
+p {
+  font-size: 20px;
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 1rem;
+}
+
+big {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.naman-logo {
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+.navbar {
+ 
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  display: flex;
+  gap: 15px;
+  z-index: 999;
+}
+
+.btn {
+  text-decoration: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 5px 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.btn:hover {
+  border-radius: 10px;
+  
+  box-shadow: 0 5px 10px white;
+}
+
+.section {
+  padding: 40px 20px;
+  margin-bottom: 60px;
+  border-radius: 12px;
+}
+
+.project-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.project-container::-webkit-scrollbar {
+  display: none;
+}
+
+.project-card {
+  text-decoration: none;
+  box-shadow: 0 10px 10px rgba(255, 255, 255, 0.3);
+  height: 300px;
+  width: 280px;
+  flex: 0 0 auto;
+  background: transparent;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  scroll-snap-align: center;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.project-card:hover {
+  transform: scale(1.05);
+  background-color: rgba(255, 255, 255, 0.05);
+  
+}
+
+footer {
+  text-align: center;
+  padding: 30px 0 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+#typewriter {
+  font-size: 20px;
+  white-space: pre-wrap;
+  border-right: 2px solid white;
+  padding-right: 5px;
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  0% { border-color: transparent; }
+  50% { border-color: white; }
+  100% { border-color: transparent; }
+}

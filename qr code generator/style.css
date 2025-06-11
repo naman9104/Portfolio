@@ -1,0 +1,43 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background:linear-gradient(to bottom, rgb(156, 255, 181),rgb(99, 240, 250),rgb(79, 120, 255) ) ;
+}
+
+.container {
+    color: rgb(0, 0, 0);
+  background: transparent;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.712);
+  text-align: center;
+}
+
+input {
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+  background: #da20ff;
+  color: rgb(255, 255, 255);
+  border: none;
+  
+  border-radius: 6px;
+  transition-duration: 0.5s;
+}
+button:hover{
+    background-color: #e874ff;
+    box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.336);
+    border-radius: 20px;
+}
+
+#qrBox {
+  margin-top: 20px;
+}

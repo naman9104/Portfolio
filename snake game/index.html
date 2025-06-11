@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Snake.EXE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+    }
+    #hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      font-family: monospace;
+      color: #0f0;
+      font-size: 18px;
+      text-shadow: 0 0 5px #0f0;
+    }
+    #score, #highScore {
+      margin-right: 20px;
+    }
+    .neon {
+      font-family: 'Arial', sans-serif;
+      color: #0f0;
+      text-shadow: 0 0 15px #0f0, 0 0 30px #0f0, 0 0 45px #0f0, 0 0 60px #0f0;
+    }
+    .separator {
+      border-left: 2px dotted #0f0;
+      height: 30px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    .gameOver.neon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      color: #f00;
+      text-shadow: 0 0 15px #f00, 0 0 30px #f00, 0 0 45px #f00, 0 0 60px #f00;
+      display: none;
+    }
+    .pauseScreen {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+    }
+    .pauseIcon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      background: #0f0;
+      box-shadow: 0 0 10px #0f0;
+      cursor: pointer;
+      display: none;
+      font-size: 30px;
+      text-align: center;
+      line-height: 40px;
+      font-family: 'Arial', sans-serif;
+      color: black;
+      font-weight: bold;
+      text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+    }
+    .pauseIcon:hover {
+      background: rgba(0, 255, 0, 0.5);
+    }
+    .restartButton, .resumeButton {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      font-family: 'Arial', sans-serif;
+      color: #0f0;
+      text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+    .restartButton:hover, .resumeButton:hover {
+      color: #fff;
+    }
+    .startScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      color: #0f0;
+      font-size: 40px;
+      text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+    }
+    .startButton {
+      font-size: 30px;
+      color: #0f0;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+      margin-top: 20px;
+    }
+    .startButton:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div id="hud">
+    <div id="score" class="neon">Score: 0</div>
+    <div class="separator"></div>
+    <div id="highScore" class="neon">High Score: 0</div>
+  </div>
+
+  <div class="gameOver neon">GAME OVER</div>
+  <div class="pauseScreen neon">PAUSED<br>Press P to Resume</div>
+  <div class="pauseIcon" onclick="togglePause()">II</div>
+  <button class="restartButton" onclick="resetGame()">Restart</button>
+  <button class="resumeButton" onclick="resumeGame()">Resume</button>
+  <div class="startScreen">
+    <div>Snake.EXE</div>
+    <button class="startButton" onclick="startGame()">Start Game</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const grid = 20;
+
+    let snake, food, score = 0;
+    let highScore = localStorage.getItem("highScore") || 0;
+    let isPaused = false, gameStarted = false, gameInterval;
+
+    const eatSound = new Audio('https://www.soundjay.com/button/beep-07.wav');
+    const gameOverSound = new Audio('https://www.soundjay.com/button/beep-09.wav');
+    const restartSound = new Audio('https://www.soundjay.com/button/beep-01a.wav');
+
+    function playSound(sound) { sound.play(); }
+
+    function placeFood() {
+      const cols = Math.floor(canvas.width / grid);
+      const rows = Math.floor(canvas.height / grid);
+      food = {
+        x: grid * Math.floor(Math.random() * cols),
+        y: grid * Math.floor(Math.random() * rows)
+      };
+    }
+
+    function initGame() {
+      snake = {
+        x: grid * 5, y: grid * 5,
+        dx: grid, dy: 0,
+        cells: [], maxCells: 4
+      };
+      placeFood();
+      score = 0;
+      updateScore();
+    }
+
+    function updateScore() {
+      document.getElementById("score").textContent = "Score: " + score;
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+      }
+      document.getElementById("highScore").textContent = "High Score: " + highScore;
+    }
+
+    function gameLoop() {
+      if (isPaused) return;
+      snake.x += snake.dx;
+      snake.y += snake.dy;
+
+      if (snake.x < 0) snake.x = canvas.width - grid;
+      if (snake.x >= canvas.width) snake.x = 0;
+      if (snake.y < 0) snake.y = canvas.height - grid;
+      if (snake.y >= canvas.height) snake.y = 0;
+
+      snake.cells.unshift({ x: snake.x, y: snake.y });
+      if (snake.cells.length > snake.maxCells) snake.cells.pop();
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+// Food (non-glowing or glowing separately)
+ctx.shadowBlur = 40;
+ctx.shadowColor = "#ff0";
+ctx.fillStyle = "#ff0";
+ctx.fillRect(food.x, food.y, grid - 1, grid - 1);
+
+// Snake with neon glow
+ctx.shadowBlur = 60;
+ctx.shadowColor = "#0f0";
+ctx.fillStyle = "#0f0";
+snake.cells.forEach(cell => {
+  ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+});
+
+      if (snake.x === food.x && snake.y === food.y) {
+        snake.maxCells++;
+        placeFood();
+        score++;
+        playSound(eatSound);
+      }
+
+      for (let i = 4; i < snake.cells.length; i++) {
+        if (snake.cells[i].x === snake.x && snake.cells[i].y === snake.y) {
+          endGame();
+        }
+      }
+
+      updateScore();
+    }
+
+    function startGame() {
+      initGame();
+      document.querySelector('.startScreen').style.display = 'none';
+      document.querySelector('.pauseIcon').style.display = 'block';
+      document.querySelector('.gameOver').style.display = 'none';
+      document.querySelector('.restartButton').style.display = 'none';
+      gameInterval = setInterval(gameLoop, 100);
+      gameStarted = true;
+    }
+
+    function resetGame() {
+      playSound(restartSound);
+      clearInterval(gameInterval);
+      initGame();
+      document.querySelector('.gameOver').style.display = 'none';
+      document.querySelector('.restartButton').style.display = 'none';
+      document.querySelector('.pauseIcon').style.display = 'block';
+      gameInterval = setInterval(gameLoop, 100);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      document.querySelector('.gameOver').style.display = 'block';
+      document.querySelector('.restartButton').style.display = 'block';
+      document.querySelector('.pauseIcon').style.display = 'none';
+      playSound(gameOverSound);
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      document.querySelector('.pauseScreen').style.display = isPaused ? 'block' : 'none';
+    }
+
+    function resumeGame() {
+      isPaused = false;
+      document.querySelector('.pauseScreen').style.display = 'none';
+      document.querySelector('.resumeButton').style.display = 'none';
+    }
+
+    window.addEventListener("keydown", e => {
+      if (!gameStarted) return;
+      switch (e.key) {
+        case "ArrowLeft": if (snake.dx === 0) { snake.dx = -grid; snake.dy = 0; } break;
+        case "ArrowUp": if (snake.dy === 0) { snake.dy = -grid; snake.dx = 0; } break;
+        case "ArrowRight": if (snake.dx === 0) { snake.dx = grid; snake.dy = 0; } break;
+        case "ArrowDown": if (snake.dy === 0) { snake.dy = grid; snake.dx = 0; } break;
+        case "p": togglePause(); break;
+      }
+    });
+  </script>
+</body>
+</html>

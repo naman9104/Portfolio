@@ -1,0 +1,56 @@
+body {
+    font-family:sans-serif;
+    background-repeat: no-repeat;
+    background-image: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhY2glMjBzY2VuZXJ5fGVufDB8fDB8fHww");
+    background-color: transparent;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+button{
+    background-color: rgb(100, 253, 253);
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+button:hover{
+    background-color: lightpink;
+    border-radius: 10px;
+}
+button1{
+    background-color: rgb(194, 253, 100);
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+button1:hover{
+    background-color: rgb(240, 255, 158);
+    border-radius: 10px;}
+h1 {
+    font-size: 30px;
+    color: rgb(131, 160, 255);
+    margin-bottom: 20px;
+    text-align:center;
+}
+.container{
+    background-color: transparent;
+    box-shadow: 0 5px 10px;
+    padding:30px;
+    border-radius: 20px;
+    width: 300px;
+    text-align: center;
+}
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+   
